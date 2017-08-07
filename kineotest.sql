@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 07, 2017 at 05:57 PM
+-- Generation Time: Aug 07, 2017 at 06:07 PM
 -- Server version: 5.7.19-0ubuntu0.16.04.1
 -- PHP Version: 7.0.18-0ubuntu0.16.04.1
 
@@ -855,19 +855,6 @@ CREATE TABLE `user_election` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `user_election`
---
-
-INSERT INTO `user_election` (`voting`, `election_id`, `user_id`, `date`) VALUES
-(1, 2, 1, '2017-08-07 15:00:27'),
-(0, 2, 2, '2017-08-07 15:37:12'),
-(0, 2, 2, '2017-08-07 15:38:11'),
-(0, 2, 2, '2017-08-07 15:38:12'),
-(1, 2, 5, '2017-08-07 15:53:48'),
-(1, 2, 5, '2017-08-07 15:53:56'),
-(1, 2, 3, '2017-08-07 15:55:01');
-
 -- --------------------------------------------------------
 
 --
@@ -882,19 +869,6 @@ CREATE TABLE `vote` (
   `party_id` int(10) UNSIGNED NOT NULL,
   `election_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='voting records storage table - not user id is NOT recorded';
-
---
--- Dumping data for table `vote`
---
-
-INSERT INTO `vote` (`id`, `date`, `candidate_id`, `constituency_id`, `party_id`, `election_id`) VALUES
-(1, '2017-08-07 15:00:27', 1, 32, 6, 2),
-(2, '2017-08-07 15:37:12', 8, 45, 6, 2),
-(3, '2017-08-07 15:38:11', 8, 45, 6, 2),
-(4, '2017-08-07 15:38:12', 8, 45, 6, 2),
-(5, '2017-08-07 15:53:48', 26, 634, 3, 2),
-(6, '2017-08-07 15:53:56', 26, 634, 3, 2),
-(7, '2017-08-07 15:55:01', 29, 87, 6, 2);
 
 --
 -- Indexes for dumped tables
@@ -994,7 +968,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `vote`
 --
 ALTER TABLE `vote`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
