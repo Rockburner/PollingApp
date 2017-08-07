@@ -1,13 +1,11 @@
 <?php
 /**
- *  basic object for writing html markup
+ *  Base class for entire system
  */
 
-class markup {
+class base {
 
   protected $ts = null;
-
-  public $comments = false;
 
   public function __construct() {
     $this->ts("[".$this->tsts()."]",'Page initiated at : ');    
@@ -24,7 +22,7 @@ class markup {
  *  @return [string]      [the markup output]
  */
 
-  protected function t($e,$a=null,$c=null,$com=null) {
+  protected function tag($e,$a=null,$in=null,$com=null) {
     $n = array('0'=>array(null,null),'1'=>array("\n",null),'2'=>array(null,"\n"),'3'=>array("\n","\n"));
     $t = array('html'=>3,'head'=>3,'title'=>2,'meta'=>2,'link'=>2,'script'=>2,'noscript'=>2,'body'=>3,'div'=>3,'h1'=>2,'h2'=>2,'h3'=>2,'h4'=>2,'h5'=>2,'h6'=>2,'p'=>2,'ul'=>3,'li'=>2,'img'=>0,'map'=>3,'area'=>2,'table'=>3,'caption'=>2,'tbody'=>3,'thead'=>3,'tfoot'=>3,'tr'=>3,'th'=>2,'td'=>2,'form'=>3,'fieldset'=>3,'legend'=>3,'label'=>0,'input'=>2,'select'=>3,'textarea'=>3,'br'=>2,'pre'=>3,'urlset'=>3,'url'=>3,'loc'=>2,'priority'=>2,'lastmod'=>2,'changefreq'=>2,'section'=>3,'nav'=>3,'article'=>3,'aside'=>3,'hgroup'=>3,'header'=>3,'footer'=>3,'main'=>3,'figure'=>3,'figcaption'=>0,'data'=>0,'time'=>0,'mark'=>0,'wbr'=>0,'small'=>0,'embed'=>3,'video'=>3,'svg'=>3,'canvas'=>3,'math'=>3,'source'=>3,'details'=>3,'summary'=>3,'menu'=>3);
     $sc = array('img','br','area','input','meta','link');
@@ -39,7 +37,7 @@ class markup {
         " -->";
     }
     if($e == 'script') {  
-      $c = ($c) ? "\n// <![CDATA[\n".$c."\n// ]]>\n" :  ";";  
+      $in = ($in) ? "\n// <![CDATA[\n".$in."\n// ]]>\n" :  ";";  
     }
     $attributes = null;
     if(is_array($a)) { 
@@ -52,20 +50,22 @@ class markup {
     }
     else { $attributes = $a; }
     if(in_array($e,$sc)) { return "<".$e.$attributes." />".$c.$n[$nn][1]; }
-    else { return "<".$e.$attributes.">".$n[$nn][0].$c.$c."</".$e.">".$n[$nn][1]; }
+    else { return "<".$e.$attributes.">".$n[$nn][0].$in.$c."</".$e.">".$n[$nn][1]; }
   }
 
 
-  // function to handle the troubleshooting data output request
+// function to handle the troubleshooting data output request
   protected function ts($a,$t=null) {
-    $x = $this->t('pre',null,$this->t('b',null,$this->tsts()." : ").$this->disp($a,$t));
-    $this->ts .= $x;
-    $x = $this->cdisp($a,$t);
-    return $x;
+    if(!$t) { $t = debug_backtrace()[1]['function']; }
+    $this->ts .= $this->tag('pre',null,
+      $this->tag('b',null,$this->tsts()." : ").
+      $this->disp($a,$t)
+    );
+    return $this->cdisp($a,$t);
   }
 
   // troubleshoot timestamp
-  private function tsts() {
+  public function tsts() {
     $mt = microtime(true);
     @list($t, $f) = explode('.', $mt);
     return date('H:i:s', (int)$t) . '.' . $f;
@@ -84,11 +84,17 @@ class markup {
       $t .= "ARRAY ";
       $o .= "(\n";
       foreach($a as $k=>$v) { $o .= $this->disp($v,$k);  }
-      $o .= $this->t('br').")";
+      $o .= $this->tag('br').")";
     }
-    elseif(is_object($a)) { $o .= 'OBJECT'; $c = ''; }
-    else { $o .= $a; $c = ''; }
-    return $this->t('a',array('onclick'=>"jQuery('#".$i."').toggleClass('hidden');"),$t).$this->t('em',array('id'=>$i,'class'=>$c),$o)."\n";
+    elseif(is_object($a)) { 
+      $o .= 'OBJECT'; 
+      $c = ''; 
+    }
+    else { 
+      $o .= $a; $c = ''; 
+    }
+    return $this->tag('a',array('onclick'=>"jQuery('#".$i."').toggleClass('hidden');"),$t).
+      $this->tag('em',array('id'=>$i,'class'=>$c),$o)."\n";
   }
 
 
@@ -107,10 +113,9 @@ class markup {
     }
     elseif(is_object($a)) { $o .= 'OBJECT';  }
     else { $o .= $a; $c = ' revealed'; }
-    return $this->t('div',array('class'=>'reveal'.$c),
-      $this->t('span',array('class'=>'reveal-head reveal-toggle'),$t).
-      $this->t('span',array('id'=>$i,'class'=>'reveal-body inline'),$o)
+    return $this->tag('div',array('class'=>'reveal'.$c),
+      $this->tag('span',array('class'=>'reveal-head reveal-toggle'),$t).
+      $this->tag('span',array('id'=>$i,'class'=>'reveal-body inline'),$o)
     );
   }
-
 }

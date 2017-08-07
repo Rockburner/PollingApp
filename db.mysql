@@ -698,3 +698,12 @@ VALUES
 (NULL,'Past Election','An election that happened in the past','2016-08-03 00:00:00',1),
 (NULL,'Present Election','An election that should be happening soon','2017-08-09 00:00:00',1),
 (NULL,'Future Election','An election that will happen in the future but which is not yet available to vote on','2020-08-09 00:00:00',0);
+
+/* populate dummy data into user table for testing */
+INSERT INTO `user` (`id`,`name`,`email`,`password`,`created`,`modified`,`confirmed`,`conf_hash`,`constituency_id`)
+VALUES
+(NULL,'User1','user1@test.com','user1','2016-08-03 00:00:00','2016-08-03 00:00:00',1,'',32),
+(NULL,'User2','user2@test.com','user2','2016-08-03 00:00:00','2016-08-03 00:00:00',1,'',45),
+(NULL,'User3','user3@test.com','user3','2016-08-03 00:00:00','2016-08-03 00:00:00',1,'',87),
+(NULL,'User4','user4@test.com','user4','2016-08-03 00:00:00','2016-08-03 00:00:00',0,'9aslds8htqhe7ff7uajwn4dfe',234),
+(NULL,'User5','user5@test.com','user5','2016-08-03 00:00:00','2016-08-03 00:00:00',1,'',654);

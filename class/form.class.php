@@ -18,7 +18,7 @@ class form extends markup {
     if($this->m) { 
       $this->fieldset();
     }
-    return $this->t('form',
+    return $this->tag('form',
       array(
         'action'=>$this->action,
         'method'=>$this->method,
@@ -30,16 +30,16 @@ class form extends markup {
   }
 
   public function fieldset() {
-    $this->form .= $this->t('fieldset',null, $this->m );
+    $this->form .= $this->tag('fieldset',null, $this->m );
     $this->m = null;
   }
 
   public function legend($t=null) {
-    $this->m .= $this->t('legend',null,$t);
+    $this->m .= $this->tag('legend',null,$t);
   }
 
   public function para($t=null,$a=null) {
-    $this->m .= $this->t('p',$a,$t);
+    $this->m .= $this->tag('p',$a,$t);
   }
 
   /* FUNCTION TO CHECK VALUES SENT TO FUNCS - IF SENT AN ARRAY, CHECKS FOR THE APPROPRIATE KEY (using $n) AND RETURN THE VALUE IF EXISTS */
@@ -53,7 +53,7 @@ class form extends markup {
   }
   protected function label($n=null,$l=null,$c=null) { 
     if($l == ' ') { $l = '&nbsp;'; }
-    if(!empty($l)) { return $this->t('label',array('for'=>(($n) ? $n : null),'class'=>(($c)?$c:null)),$l); }
+    if(!empty($l)) { return $this->tag('label',array('for'=>(($n) ? $n : null),'class'=>(($c)?$c:null)),$l); }
     else { return null; }
   }
 
@@ -77,19 +77,19 @@ class form extends markup {
     }
     else { $attr['value'] = $v; }
     if($j) { $attr = array_merge($attr,$j); }
-    return $this->t('input',$attr);
+    return $this->tag('input',$attr);
   }
 
 
   protected function select($n,$opts=null,$j=null,$dis=false,$c=null) {
     $attr = array('name'=>$n,'id'=>$n,'class'=>$c,'disabled'=>(($dis) ? 'disabled' : null));
     if($j) { $attr = array_merge($attr,$j); }
-    return $this->t('select',$attr,$opts);
+    return $this->tag('select',$attr,$opts);
   }
   
 
   protected function div($n,$e=null,$content=null,$cl=null) { // name of field also used to CLASS div.
-    $this->m .= $this->t('div',array('class'=>$n.' '.$cl.(($e) ? " error": null)),$content);
+    $this->m .= $this->tag('div',array('class'=>$n.' '.$cl.(($e) ? " error": null)),$content);
   }
 
   protected function html5field($t,$n,$l=null,$v=null,$e=null,$j=null,$dis=null,$chars=null,$c=null,$i=null,$p=null,$min=null,$max=null,$step=null,$cl=null) {
@@ -107,7 +107,7 @@ class form extends markup {
     $this->div(
       $n.$dis,
       $e,
-        $this->label($n,$l.(($chars)? $this->t('br').$this->t('span',null,"(".$chars." chars)") :null),'text').
+        $this->label($n,$l.(($chars)? $this->tag('br').$this->tag('span',null,"(".$chars." chars)") :null),'text').
         $this->input($t,$n,$v,$c,$j,null,$dis,null,null,$chars,$i,$p,$min,$max,$step).
         $disHidden.
         $h,
@@ -126,7 +126,7 @@ class form extends markup {
       $h = $this->hint($l['hint'],$n);
       $l = $l['label'];
     }
-    $content = $this->label($n,$l.(($chars)? $this->t('br').$this->t('span',null,"(".$chars." chars)") :null),'text').$this->input('text',$n,$v,$c,$j,null,$dis,null,null,$chars,$i,$p).$disHidden.$h;
+    $content = $this->label($n,$l.(($chars)? $this->tag('br').$this->tag('span',null,"(".$chars." chars)") :null),'text').$this->input('text',$n,$v,$c,$j,null,$dis,null,null,$chars,$i,$p).$disHidden.$h;
     $this->div($n.$dis,$e,$content,(($cl) ? $cl : $c));
   }
 
@@ -160,9 +160,9 @@ class form extends markup {
         $attr = array('value'=>$kk);
         if(is_array($vv)) { $title = $vv['title']; $attr['class'] = $vv['class']; }
         else { $title = $vv; }
-        $opts .= $this->t('option',$attr,$title); } 
+        $opts .= $this->tag('option',$attr,$title); } 
       }
-      else { $opts .= $this->t('option',array('value'=>'null'),$o); } // DEFAULT OPTION IS STRING SENT
+      else { $opts .= $this->tag('option',array('value'=>'null'),$o); } // DEFAULT OPTION IS STRING SENT
     } 
     if(is_array($arr)) { // IF SENT OPTIONS IN AN ARRAY
       foreach($arr as $ov=>$ot) { 
@@ -170,7 +170,7 @@ class form extends markup {
         if(!empty($v) && $ov == $v) { $attr['selected'] = 'selected'; $attr['class'] = 'selected'; }
         if(is_array($ot)) { $title = $ot['title']; $attr['class'] = ((isset($attr['class'])) ? $attr['class']." " : null ) . $ot['class']; }
         else { $title = $ot; }
-        $opts .= $this->t('option',$attr,$title); 
+        $opts .= $this->tag('option',$attr,$title); 
       } 
     }
     elseif(is_string($arr)) { $opts .= $arr; } // IF THE OPTIONS HAVE BEEN PRE-CREATED
@@ -195,5 +195,38 @@ class form extends markup {
     }
     $this->div($pc,null, $this->label((($i) ? $i : $n),(($l)?$l:"&nbsp;"),'submit') . $this->input('submit',$n,$v,'',$j,null,$dis,null,null,null,$i) .$h,$cl); // input($t,$n,$v=null,$c=null,$j=null,$d=1,$dis=null,
   }
+
+
+  public function inputRadio($n,$l=null,$v=null,$e=null,$arr=null,$j=null,$dis=null,$ord=false,$cl=null) { // $ord :true=label, input, false=input,label.,div class
+    $v = $this->chV($v,$n);
+    $e = $this->chV($e,$n);
+    $radios = null;
+    foreach($arr as $rv=>$rt) {
+      $label = $this->label($n."_".$rv,$rt,'radios');
+      $input = $this->input('radio',$n,$rv,null,$j,$v,$dis);
+      $x = ( ($ord) ? $label.$input : $input.$label )."\n"; 
+      $radios .= $this->tag('li',array('class'=>$n."_".$rv),$x); 
+    }
+    if($radios) { $radios = $this->tag('ul',array('class'=>'radios '.$n), $radios ); }
+    $h =  null;
+    if(is_array($l)) {
+      $h = $this->hint($l['hint'],$n);
+      $l = $l['label'];
+    }
+    $this->div($n,$e, $this->label(null,$l,'radio') . $radios .$h, $cl ); 
+  }
+
+  public function inputCheckbox($n,$l,$v=null,$d=1,$e=null,$ord=false,$c=null,$j=null) { // name,label text,value,default value of checkbox,error,order:true=label, input, false=input,label, class,extra attributes 
+    $v = $this->chV($v,$n);
+    $e = $this->chV($e,$n);
+    $h =  null;
+    if(is_array($l)) {
+      $h = $this->hint($l['hint'],$n);
+      $l = $l['label'];
+    }
+    if($ord) { $ty = "lblckbx"; $o = $this->label($n,$l,'checkbox').$this->inputHidden($n,'0') . $this->input('checkbox',$n,$v,'',$j,$d); }
+    else { $ty = "ckbxlbl"; $o = $this->inputHidden($n,'0') . $this->input('checkbox',$n,$v,'',$j,$d) . $this->label($n,$l,'checkbox'); }
+    $this->div($n." ".$ty,$e,$o.$h,$c);
+  }  
 
 }
