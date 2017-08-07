@@ -10,7 +10,7 @@ Polling app including user registration and login for practise and demo purposes
 - setup a database user 'kineotest' with password 'kineotest'.
 - open the location via a web browser and login.
 
-####### Dummy users.
+###### Dummy users.
 
 The database is prepopulated with 5 dummy users 
 - user1@test.com / user1
